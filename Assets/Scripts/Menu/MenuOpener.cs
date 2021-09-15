@@ -116,6 +116,7 @@ public class MenuOpener : MonoBehaviour
     /// </summary>
     public void ToggleMenu()
     {
+        Debug.Log("now");
         if (_menuToOpen.Active)
         {
             CloseMenu();

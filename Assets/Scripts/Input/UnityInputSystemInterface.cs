@@ -123,7 +123,10 @@ public class UnityInputSystemInterface : MonoBehaviour, Controls.IPlayerActions
     void Controls.IPlayerActions.OnMenu(InputAction.CallbackContext context)
     {
         if (context.performed)
+        {
+            Debug.Log("here");
             _onCaseMenuOpened.Invoke();
+        }
     }
 
     /// <summary>
