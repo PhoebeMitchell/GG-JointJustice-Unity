@@ -28,8 +28,10 @@ public class UnityInputSystemInterface : MonoBehaviour, Controls.IPlayerActions
     /// </summary>
     private void OnEnable()
     {
+        Debug.Log("herenow");
         if (_controls == null)
         {
+            Debug.Log("controls null");
             _controls = new Controls();
             _controls.Player.SetCallbacks(this);
         }
