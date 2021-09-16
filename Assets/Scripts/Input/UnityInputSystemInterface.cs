@@ -176,4 +176,9 @@ public class UnityInputSystemInterface : MonoBehaviour, Controls.IPlayerActions
     {
         //Unused for now
     }
+
+    public void OnMenu()
+    {
+        _onCaseMenuOpened.Invoke();
+    }
 }
