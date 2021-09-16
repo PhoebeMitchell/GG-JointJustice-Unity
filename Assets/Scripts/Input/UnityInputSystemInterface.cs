@@ -179,6 +179,7 @@ public class UnityInputSystemInterface : MonoBehaviour, Controls.IPlayerActions
 
     public void OnMenu()
     {
+        Debug.Log("onMenu");
         _onCaseMenuOpened.Invoke();
     }
 }
