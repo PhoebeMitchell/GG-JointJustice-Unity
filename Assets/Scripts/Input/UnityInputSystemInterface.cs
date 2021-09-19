@@ -28,8 +28,10 @@ public class UnityInputSystemInterface : MonoBehaviour, Controls.IPlayerActions
     /// </summary>
     private void OnEnable()
     {
+        Debug.Log("herenow");
         if (_controls == null)
         {
+            Debug.Log("controls null");
             _controls = new Controls();
             _controls.Player.SetCallbacks(this);
         }
@@ -123,7 +125,10 @@ public class UnityInputSystemInterface : MonoBehaviour, Controls.IPlayerActions
     void Controls.IPlayerActions.OnMenu(InputAction.CallbackContext context)
     {
         if (context.performed)
+        {
+            Debug.Log("here");
             _onCaseMenuOpened.Invoke();
+        }
     }
 
     /// <summary>
@@ -170,5 +175,11 @@ public class UnityInputSystemInterface : MonoBehaviour, Controls.IPlayerActions
     void Controls.IPlayerActions.OnDown(InputAction.CallbackContext context)
     {
         //Unused for now
+    }
+
+    public void OnMenu()
+    {
+        Debug.Log("onMenu");
+        _onCaseMenuOpened.Invoke();
     }
 }

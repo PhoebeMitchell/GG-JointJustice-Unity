@@ -36,6 +36,14 @@ public class MenuOpener : MonoBehaviour
             _parentMenu = null;
         }
     }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            ToggleMenu();
+        }
+    }
     
     /// <summary>
     /// Opens the designated menu. Sets the current menu to be inactive
@@ -116,6 +124,7 @@ public class MenuOpener : MonoBehaviour
     /// </summary>
     public void ToggleMenu()
     {
+        Debug.Log("now");
         if (_menuToOpen.Active)
         {
             CloseMenu();

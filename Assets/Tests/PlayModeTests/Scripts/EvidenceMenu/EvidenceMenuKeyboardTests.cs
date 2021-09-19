@@ -25,9 +25,11 @@ namespace Tests.PlayModeTests.Scripts.EvidenceMenu
             yield return null;
             _evidenceMenu = Resources.FindObjectsOfTypeAll<global::EvidenceMenu>()[0];
             yield return _inputTestTools.PressForFrame(_inputTestTools.Keyboard.zKey);
+            // _evidenceMenu.gameObject.SetActive(false);
             Assert.True(_evidenceMenu.isActiveAndEnabled);
             yield return _inputTestTools.PressForFrame(_inputTestTools.Keyboard.cKey);
             yield return _inputTestTools.PressForFrame(_inputTestTools.Keyboard.zKey);
+            // _evidenceMenu.gameObject.SetActive(false);
             Assert.False(_evidenceMenu.isActiveAndEnabled);
             SceneManager.UnloadScene("EvidenceMenu - Test Scene");
         }
