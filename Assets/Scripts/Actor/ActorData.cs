@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Actor Data", menuName = "Actors/Actor Data")]
@@ -13,9 +12,6 @@ public class ActorData : ScriptableObject, ICourtRecordObject
     
     [field: SerializeField, Tooltip("The actor's sprite that will appear in the profiles menu.")]
     public Sprite Profile { get; private set; }
-    
-    [field: SerializeField, Tooltip("The sprite that should be displayed if an incompatible animation is played.")]
-    public Sprite DefaultSprite { get; private set; }
 
     [field: SerializeField, Tooltip("Name displayed when referring to this actor or when they are speaking.")]
     public string DisplayName { get; private set; }
@@ -40,6 +36,11 @@ public class ActorData : ScriptableObject, ICourtRecordObject
     public Sprite Icon => Profile;
     public string Description => Bio;
 
+    /// <summary>
+    /// Generates a string with the actor's age and age, used in the evidence menu.
+    /// Handles what should be written when an actors name is unknown, or uncertain.
+    /// </summary>
+    /// <returns>The name and age of the actor as a string.</returns>
     private string GenerateNameWithAge()
     {
         string age = _ageCertainty switch {
