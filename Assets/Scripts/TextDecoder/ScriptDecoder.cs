@@ -1,23 +1,30 @@
 using System.Collections.Generic;
+using System.Reflection;
 using Ink.Runtime;
 using UnityEngine;
 
-public class ScriptDecoder
+public class ScriptDecoder 
 {
-    private Story _story;
-    private Queue<ScriptAction> _actions = new Queue<ScriptAction>();
-    
-    public ScriptDecoder(TextAsset script)
-    {
-        _story = new Story(script.text);
-        while (_story.canContinue)
-        {
-            _actions.Enqueue(new ScriptAction(_story.Continue()));
-        }
+    private Queue<INode> _nodes = new Queue<INode>();
+    private ActionDecoder _actionDecoder;
 
-        while (_actions.Count > 0)
+    public ScriptDecoder(IDecoder decoder, TextAsset script)
+    {
+        _actionDecoder = new ActionDecoder(decoder);
+        var story = new Story(script.text);
+        while (story.canContinue)
         {
-            Debug.Log(_actions.Dequeue().Text);
+            string line = story.Continue();
+            INode node = line[0] == '&'
+                ? _actionDecoder.Decode(line)
+                : (INode)new DialogueNode(line, decoder.AppearingDialogueController);
+            node.Execute();
+            _nodes.Enqueue(node);
         }
+    }
+    
+    public void NextAction()
+    {
+        _nodes.Dequeue().Execute();
     }
 }

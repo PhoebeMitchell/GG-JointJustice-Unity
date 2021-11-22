@@ -94,7 +94,7 @@ public class AppearingDialogueController : MonoBehaviour, IAppearingDialogueCont
             return;
         }
 
-        _directorActionDecorder.Decoder.AppearingDialogueController = this;
+        _directorActionDecorder.AppearingDialogueController = this;
 
         if (_controlledText == null)
         {

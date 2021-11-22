@@ -1,18 +1,25 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class DirectorActionDecoder : MonoBehaviour
+public class DirectorActionDecoder : MonoBehaviour, IDecoder
 {
     [Header("Events")]
     [Tooltip("Event that gets called when the system is done processing the action")]
     [SerializeField] private UnityEvent _onActionDone;
 
-    public ActionDecoder Decoder { get; } = new ActionDecoder();
+    private ActionDecoder _decoder;
+    
+    public IActorController ActorController { get; set; }
+    public ISceneController SceneController { get; set; }
+    public IAudioController AudioController { get; set; }
+    public IEvidenceController EvidenceController { get; set; }
+    public IAppearingDialogueController AppearingDialogueController { get; set; }
 
     private void Awake()
     {
+        _decoder = new ActionDecoder(this);
         // We wrap this in an Action so we have no ties to UnityEngine in the ActionDecoder
-        Decoder.OnActionDone += () => _onActionDone.Invoke();
+        _decoder.OnActionDone += () => _onActionDone.Invoke();
     }
 
     #region API
@@ -24,7 +31,7 @@ public class DirectorActionDecoder : MonoBehaviour
     {
         try
         {
-            Decoder.OnNewActionLine(line);
+            _decoder.OnNewActionLine(line);
         }
         catch (TextDecoder.Parser.ScriptParsingException exception)
         {

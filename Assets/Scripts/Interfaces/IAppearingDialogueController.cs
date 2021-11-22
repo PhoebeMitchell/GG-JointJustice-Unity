@@ -8,4 +8,5 @@ public interface IAppearingDialogueController
     void ClearAllWaiters();
     void AutoSkipDialog(bool skip);
     void HideTextbox();
+    void StartDialog(string dialog);
 }

@@ -36,7 +36,7 @@ public class ActorController : MonoBehaviour, IActorController
             return;
         }
 
-        _directorActionDecoder.Decoder.ActorController = this;
+        _directorActionDecoder.ActorController = this;
     }
 
     /// <summary>

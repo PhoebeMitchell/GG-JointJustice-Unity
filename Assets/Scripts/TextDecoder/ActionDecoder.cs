@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ActionDecoder
 {
     public event Action OnActionDone;
-    public IActorController ActorController { get; set; }
-    public ISceneController SceneController { get; set; }
-    public IAudioController AudioController { get; set; }
-    public IEvidenceController EvidenceController { get; set; }
-    public IAppearingDialogueController AppearingDialogueController { get; set; }
 
+    private IDecoder _decoder;
+
+    public ActionDecoder(IDecoder decoder)
+    {
+        _decoder = decoder;
+    }
+    
     /// <summary>
     /// Parse action lines inside .ink-files
     /// </summary>
@@ -29,6 +32,15 @@ public class ActionDecoder
     ///         4. Invoking the method with the parsed parameters
     /// </remarks>
     public void OnNewActionLine(string actionLine)
+    {
+        ActionNode method = Decode(actionLine);
+
+        // Call the method
+        // method.Info.Invoke(this, method.Parameters);
+        method.Execute();
+    }
+
+    public ActionNode Decode(string actionLine)
     {
         actionLine = actionLine.Trim();
         const char actionSideSeparator = ':';
@@ -74,23 +86,20 @@ public class ActionDecoder
             Type parser = GetType().Assembly.GetTypes().FirstOrDefault(type => type.BaseType is { IsGenericType: true } && type.BaseType.GenericTypeArguments[0] == methodParameter.ParameterType);
             if (parser == null)
             {
-                Debug.LogError($"The TextDecoder.Parser namespace contains no Parser for type {methodParameter.ParameterType}");
-                return;
+                throw new ArgumentException($"The TextDecoder.Parser namespace contains no Parser for type {methodParameter.ParameterType}");
             }
 
             ConstructorInfo parserConstructor = parser.GetConstructor(Type.EmptyTypes);
             if (parserConstructor == null)
             {
-                Debug.LogError($"TextDecoder.Parser for type {methodParameter.ParameterType} has no constructor without parameters");
-                return;
+                throw new ArgumentException($"TextDecoder.Parser for type {methodParameter.ParameterType} has no constructor without parameters");
             }
 
             // Find the 'Parse' method on that parser
             MethodInfo parseMethod = parser.GetMethod("Parse");
             if (parseMethod == null)
             {
-                Debug.LogError($"TextDecoder.Parser for type {methodParameter.ParameterType} has no 'Parse' method");
-                return;
+                throw new ArgumentException($"TextDecoder.Parser for type {methodParameter.ParameterType} has no 'Parse' method");
             }
 
             // Create a parser and call the 'Parse' method
@@ -113,8 +122,7 @@ public class ActionDecoder
             parsedMethodParameters.Add(methodParameters[suppliedParameterCount].DefaultValue);
         }
 
-        // Call the method
-        method.Invoke(this, parsedMethodParameters.ToArray());
+        return new ActionNode(method, parsedMethodParameters.ToArray(), _decoder);
     }
 
     // ReSharper disable InconsistentNaming
@@ -123,46 +131,46 @@ public class ActionDecoder
     #region DialogStuff
     private void DIALOG_SPEED(float seconds)
     {
-        AppearingDialogueController.SetTimerValue(WaiterType.Dialog, seconds);
+        _decoder.AppearingDialogueController.SetTimerValue(WaiterType.Dialog, seconds);
     }
     private void OVERALL_SPEED(float seconds)
     {
-        AppearingDialogueController.SetTimerValue(WaiterType.Overall, seconds);
+        _decoder.AppearingDialogueController.SetTimerValue(WaiterType.Overall, seconds);
     }
     private void PUNCTUATION_SPEED(float seconds)
     {
-        AppearingDialogueController.SetTimerValue(WaiterType.Punctuation, seconds);
+        _decoder.AppearingDialogueController.SetTimerValue(WaiterType.Punctuation, seconds);
     }
 
     private void CLEAR_SPEED()
     {
-        AppearingDialogueController.ClearAllWaiters();
+        _decoder.AppearingDialogueController.ClearAllWaiters();
     }
 
     private void DISABLE_SKIPPING(bool value)
     {
-        AppearingDialogueController.ToggleDisableTextSkipping(value);
+        _decoder.AppearingDialogueController.ToggleDisableTextSkipping(value);
     }
 
     private void CONTINUE_DIALOG()
     {
-        AppearingDialogueController.ContinueDialog();
+        _decoder.AppearingDialogueController.ContinueDialog();
     }
 
     private void AUTO_SKIP(bool value)
     {
-        AppearingDialogueController.AutoSkipDialog(value);
+        _decoder.AppearingDialogueController.AutoSkipDialog(value);
     }
 
     private void APPEAR_INSTANTLY()
     {
-        AppearingDialogueController.PrintTextInstantly = true;
+        _decoder.AppearingDialogueController.PrintTextInstantly = true;
         OnActionDone?.Invoke();
     }
 
     private void HIDE_TEXTBOX()
     {
-        AppearingDialogueController.HideTextbox();
+        _decoder.AppearingDialogueController.HideTextbox();
         OnActionDone?.Invoke();
     }
     #endregion
@@ -170,30 +178,30 @@ public class ActionDecoder
     #region EvidenceController
     private void ADD_EVIDENCE(string evidence)
     {
-        EvidenceController.AddEvidence(evidence);
+        _decoder.EvidenceController.AddEvidence(evidence);
         OnActionDone?.Invoke();
     }
 
     private void REMOVE_EVIDENCE(string evidence)
     {
-        EvidenceController.RemoveEvidence(evidence);
+        _decoder.EvidenceController.RemoveEvidence(evidence);
         OnActionDone?.Invoke();
     }
 
     private void ADD_RECORD(string actor)
     {
-        EvidenceController.AddToCourtRecord(actor);
+        _decoder.EvidenceController.AddToCourtRecord(actor);
         OnActionDone?.Invoke();
     }
     
     private void PRESENT_EVIDENCE()
     {
-        EvidenceController.RequirePresentEvidence();
+        _decoder.EvidenceController.RequirePresentEvidence();
     }
 
     private void SUBSTITUTE_EVIDENCE(string evidence)
     {
-        EvidenceController.SubstituteEvidenceWithAlt(evidence);
+        _decoder.EvidenceController.SubstituteEvidenceWithAlt(evidence);
         OnActionDone?.Invoke();
     }
 
@@ -203,19 +211,19 @@ public class ActionDecoder
     #region AudioController
     private void PLAY_SFX(string sfx)
     {
-        AudioController.PlaySFX(sfx);
+        _decoder.AudioController.PlaySFX(sfx);
         OnActionDone?.Invoke();
     }
 
     private void PLAY_SONG(string songName)
     {
-        AudioController.PlaySong(songName);
+        _decoder.AudioController.PlaySong(songName);
         OnActionDone?.Invoke();
     }
 
     private void STOP_SONG()
     {
-        AudioController.StopSong();
+        _decoder.AudioController.StopSong();
         OnActionDone?.Invoke();
     }
     #endregion
@@ -223,68 +231,68 @@ public class ActionDecoder
     #region SceneController
     private void FADE_IN(float timeInSeconds)
     {
-        SceneController.FadeIn(timeInSeconds);
+        _decoder.SceneController.FadeIn(timeInSeconds);
     }
 
     private void FADE_OUT(float timeInSeconds)
     {
-        SceneController.FadeOut(timeInSeconds);
+        _decoder.SceneController.FadeOut(timeInSeconds);
     }
 
     private void SHAKE_SCREEN(float intensity, float duration, bool isBlocking)
     {
-        SceneController.ShakeScreen(intensity, duration, isBlocking);
+        _decoder.SceneController.ShakeScreen(intensity, duration, isBlocking);
     }
 
     private void SCENE(string sceneName)
     {
-        SceneController.SetScene(sceneName);
+        _decoder.SceneController.SetScene(sceneName);
         OnActionDone?.Invoke();
     }
 
     private void CAMERA_SET(int x, int y)
     {
-        SceneController.SetCameraPos(new Vector2Int(x, y));
+        _decoder.SceneController.SetCameraPos(new Vector2Int(x, y));
         OnActionDone?.Invoke();
     }
 
     private void CAMERA_PAN(float duration, int x, int y)
     {
-        SceneController.PanCamera(duration, new Vector2Int(x, y));
+        _decoder.SceneController.PanCamera(duration, new Vector2Int(x, y));
         OnActionDone?.Invoke();
     }
 
     private void SHOW_ITEM(string item, ItemDisplayPosition itemPos)
     {
-        SceneController.ShowItem(item, itemPos);
+        _decoder.SceneController.ShowItem(item, itemPos);
         OnActionDone?.Invoke();
     }
 
     private void HIDE_ITEM()
     {
-        SceneController.HideItem();
+        _decoder.SceneController.HideItem();
         OnActionDone?.Invoke();
     }
 
     private void WAIT(float seconds)
     {
-        SceneController.Wait(seconds);
+        _decoder.SceneController.Wait(seconds);
     }
 
     private void PLAY_ANIMATION(string animationName)
     {
-        SceneController.PlayAnimation(animationName);
+        _decoder.SceneController.PlayAnimation(animationName);
     }
 
     private void JUMP_TO_POSITION(int slotIndex)
     {
-        SceneController.JumpToActorSlot(slotIndex);
+        _decoder.SceneController.JumpToActorSlot(slotIndex);
         OnActionDone?.Invoke();
     }
 
     private void PAN_TO_POSITION(int slotIndex, float panDuration)
     {
-        SceneController.PanToActorSlot(slotIndex, panDuration);
+        _decoder.SceneController.PanToActorSlot(slotIndex, panDuration);
         OnActionDone?.Invoke();
     }
 
@@ -294,7 +302,7 @@ public class ActionDecoder
     #region ActorController
     private void ACTOR(string actor)
     {
-        ActorController.SetActiveActor(actor);
+        _decoder.ActorController.SetActiveActor(actor);
         OnActionDone?.Invoke();
     }
 
@@ -302,11 +310,11 @@ public class ActionDecoder
     {
         if (shouldShow)
         {
-            SceneController.ShowActor();
+            _decoder.SceneController.ShowActor();
         }
         else
         {
-            SceneController.HideActor();
+            _decoder.SceneController.HideActor();
         }
 
         OnActionDone?.Invoke();
@@ -324,8 +332,8 @@ public class ActionDecoder
 
     private void SetSpeaker(string actor, SpeakingType speakingType)
     {
-        ActorController.SetActiveSpeaker(actor);
-        ActorController.SetSpeakingType(speakingType);
+        _decoder.ActorController.SetActiveSpeaker(actor);
+        _decoder.ActorController.SetSpeakingType(speakingType);
         OnActionDone?.Invoke();
     }
 
@@ -333,12 +341,12 @@ public class ActionDecoder
     {
         if (optional_targetActor == null)
         {
-            ActorController.SetPose(poseName);
+            _decoder.ActorController.SetPose(poseName);
             OnActionDone?.Invoke();
         }
         else
         {
-            ActorController.SetPose(poseName, optional_targetActor);
+            _decoder.ActorController.SetPose(poseName, optional_targetActor);
             OnActionDone?.Invoke();
         }
     }
@@ -347,17 +355,17 @@ public class ActionDecoder
     {
         if (optional_targetActor == null)
         {
-            ActorController.PlayEmotion(poseName);
+            _decoder.ActorController.PlayEmotion(poseName);
         }
         else
         {
-            ActorController.PlayEmotion(poseName, optional_targetActor);
+            _decoder.ActorController.PlayEmotion(poseName, optional_targetActor);
         }
     }
 
     private void SET_ACTOR_POSITION(int oneBasedSlotIndex, string actorName)
     {
-        ActorController.AssignActorToSlot(actorName, oneBasedSlotIndex);
+        _decoder.ActorController.AssignActorToSlot(actorName, oneBasedSlotIndex);
         OnActionDone?.Invoke();
     }
     #endregion

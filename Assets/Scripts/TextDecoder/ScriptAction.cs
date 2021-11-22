@@ -1,12 +1,20 @@
-using System;
+using System.Reflection;
 
 public struct ScriptAction
 {
-    public ScriptAction(String line)
+    public ScriptAction(MethodInfo info, object[] parameters, string text = "")
     {
-        Text = line;
+        Info = info;
+        Parameters = parameters;
+        Text = text;
     }
+
+    public MethodInfo Info { get; }
+    public object[] Parameters { get; }
+    public string Text { get; }
     
-    public string Text { get; set; }
-    // public Action Action { get; set; }
+    public override string ToString()
+    {
+        return Text == "" ? Info.Name : Text;
+    }
 }
