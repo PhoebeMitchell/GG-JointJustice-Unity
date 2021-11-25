@@ -17,6 +17,6 @@ public class ActionNode : INode
     
     public void Execute()
     {
-        _methodInfo.Invoke(_decoder, _parameters);
+        // _methodInfo.Invoke(_decoder, _parameters);
     }
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public interface ICourtRecordObject
-{ 
+{
     public string InstanceName { get; }
     public string DisplayName { get; }
     public string CourtRecordName { get; }
