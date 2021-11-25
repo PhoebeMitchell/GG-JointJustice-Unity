@@ -986,7 +986,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _directorActionDecoder: {fileID: 5228303783986964379}
-  _actorInventory: {fileID: 0}
+  _actorInventory: {fileID: 8461652914731907775}
   _onNewSpeakingActor:
     m_PersistentCalls:
       m_Calls:
@@ -1355,7 +1355,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  _evidenceInventory: {fileID: 0}
+  _evidenceInventory: {fileID: 2099672851101822856}
   _evidenceMenu: {fileID: 4864517766780460}
 --- !u!1 &5228303784783594412
 GameObject:

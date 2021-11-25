@@ -11,12 +11,12 @@ public class ObjectPreloader : IActorController, IEvidenceController
 
     public void SetActiveActor(string actor)
     {
-        LoadObject(actor);
+        LoadActor(actor);
     }
 
     public void SetActiveSpeaker(string actor)
     {
-        LoadObject(actor);
+        LoadActor(actor);
     }
 
     public void SetPose(string pose, string actorName = null)
@@ -45,12 +45,12 @@ public class ObjectPreloader : IActorController, IEvidenceController
     
     public void AssignActorToSlot(string actor, int oneBasedSlotIndex)
     {
-        LoadObject(actor);
+        LoadActor(actor);
     }
 
     public void AddEvidence(string evidence)
     {
-        LoadObject(evidence);
+        LoadEvidence(evidence);
     }
 
     public void RemoveEvidence(string evidence)
@@ -59,7 +59,7 @@ public class ObjectPreloader : IActorController, IEvidenceController
 
     public void AddToCourtRecord(string actor)
     {
-        LoadObject(actor);
+        LoadActor(actor);
     }
 
     public void RequirePresentEvidence()
@@ -68,18 +68,27 @@ public class ObjectPreloader : IActorController, IEvidenceController
 
     public void SubstituteEvidence(string originalEvidenceName, string newEvidenceName)
     {
-        LoadObject(newEvidenceName);
+        LoadEvidence(newEvidenceName);
     }
 
     public void OnPresentEvidence(ICourtRecordObject evidence)
     {
     }
+
+    private void LoadActor(string actorName)
+    {
+        LoadObject(actorName, "Actors");
+    }
     
-    private void LoadObject(string objectName)
+    private void LoadEvidence(string evidenceName)
+    {
+        LoadObject(evidenceName, "Evidence");
+    }
+    
+    private void LoadObject(string objectName, string directory)
     {
         if (_inventory.ContainsKey(objectName)) return;
         
-        _inventory.Add(Resources.Load<ActorData>(objectName));
-        Debug.Log($"Loaded {objectName}");
+        _inventory.Add(Resources.Load<ActorData>($"{directory}/{objectName}"));
     }
 }

@@ -20,9 +20,4 @@ public class ScriptImporter : MonoBehaviour, IDecoder
         EvidenceController = new ObjectPreloader(_evidenceInventory);
         _scriptDecoder = new ScriptDecoder(this, _narrativeScript);
     }
-
-    public void ContinueStory()
-    {
-        _scriptDecoder.NextAction();
-    }
 }

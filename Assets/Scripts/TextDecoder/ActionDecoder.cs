@@ -33,15 +33,6 @@ public class ActionDecoder
     /// </remarks>
     public void OnNewActionLine(string actionLine)
     {
-        ActionNode method = Decode(actionLine);
-
-        // Call the method
-        // method.Info.Invoke(this, method.Parameters);
-        method.Execute();
-    }
-
-    public ActionNode Decode(string actionLine)
-    {
         actionLine = actionLine.Trim();
         const char actionSideSeparator = ':';
         const char actionParameterSeparator = ',';
@@ -122,7 +113,7 @@ public class ActionDecoder
             parsedMethodParameters.Add(methodParameters[suppliedParameterCount].DefaultValue);
         }
 
-        return new ActionNode(method, parsedMethodParameters.ToArray(), _decoder);
+        method.Invoke(this, parsedMethodParameters.ToArray());
     }
 
     // ReSharper disable InconsistentNaming
