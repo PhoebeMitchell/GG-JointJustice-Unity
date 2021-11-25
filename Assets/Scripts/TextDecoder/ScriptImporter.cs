@@ -1,3 +1,4 @@
+using Ink.Runtime;
 using UnityEngine;
 
 public class ScriptImporter : MonoBehaviour, IDecoder
@@ -12,12 +13,12 @@ public class ScriptImporter : MonoBehaviour, IDecoder
     public IEvidenceController EvidenceController { get; private set; }
     public IAppearingDialogueController AppearingDialogueController { get; set; }
 
-    private ScriptDecoder _scriptDecoder;
+    private ScriptReader _scriptReader;
 
     private void Awake()
     {
         ActorController = new ObjectPreloader(_actorInventory);
         EvidenceController = new ObjectPreloader(_evidenceInventory);
-        _scriptDecoder = new ScriptDecoder(this, _narrativeScript);
+        _scriptReader = new ScriptReader(this, new Story(_narrativeScript.text));
     }
 }
