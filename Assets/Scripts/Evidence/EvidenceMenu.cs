@@ -10,11 +10,11 @@ public class EvidenceMenu : MonoBehaviour
     [SerializeField, Tooltip("Drag the evidence controller here")]
     private EvidenceController _evidenceController;
 
-    [FormerlySerializedAs("_evidenceDictionary")] [SerializeField, Tooltip("Drag the evidence dictionary here")]
-    private EvidenceInventory _evidenceInventory;
+    [SerializeField, Tooltip("Drag the evidence inventory here")]
+    private ObjectInventory _evidenceInventory;
 
-    [FormerlySerializedAs("_actorDictionary")] [SerializeField, Tooltip("Drag the actor dictionary here")]
-    private ActorInventory _actorInventory;
+    [SerializeField, Tooltip("Drag the actor inventory here")]
+    private ObjectInventory _actorInventory;
 
     [SerializeField, Tooltip("Drag the TextMeshProUGUI component used for displaying the evidence's name here")]
     private TextMeshProUGUI _evidenceName;
@@ -42,7 +42,7 @@ public class EvidenceMenu : MonoBehaviour
 
     private bool _profileMenuActive;
     private Sprite _evidenceMenuLabel;
-    private ICourtRecordObjectInventory _activeDictionary;
+    private ObjectInventory _activeDictionary;
     private int _currentPage;
     private int _numberOfPages;
     private int _startIndex;

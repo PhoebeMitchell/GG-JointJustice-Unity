@@ -7,10 +7,9 @@ public class ActorController : MonoBehaviour, IActorController
 {
     [Tooltip("Attach the action decoder object here")]
     [SerializeField] private DirectorActionDecoder _directorActionDecoder;
-
-    [FormerlySerializedAs("_actorDictionary")]
+    
     [Tooltip("Drag an ActorDictionary instance here, containing every required character")]
-    [SerializeField] private ActorInventory _actorInventory;
+    [SerializeField] private ObjectInventory _actorInventory;
 
     private Actor _activeActor;
     private BGScene _activeScene;
@@ -96,7 +95,7 @@ public class ActorController : MonoBehaviour, IActorController
     {
         try
         {
-            return _actorInventory[actorName];
+            return _actorInventory[actorName] as ActorData;
         }
         catch (KeyNotFoundException exception)
         {
@@ -190,7 +189,7 @@ public class ActorController : MonoBehaviour, IActorController
     {
         try
         {
-            _currentSpeakingActor = _actorInventory[actor];
+            _currentSpeakingActor = _actorInventory[actor] as ActorData;
             _onNewSpeakingActor.Invoke(_currentSpeakingActor);
         }
         catch (KeyNotFoundException exception)
@@ -279,7 +278,7 @@ public class ActorController : MonoBehaviour, IActorController
 
         try
         {
-            var actorData = _actorInventory[actor];
+            var actorData = (ActorData)_actorInventory[actor];
             tempActor.SetActor(actorData);
             SetActorInLookupTable(actorData, tempActor);
         }

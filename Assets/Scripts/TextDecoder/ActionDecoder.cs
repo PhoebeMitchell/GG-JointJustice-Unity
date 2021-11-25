@@ -201,9 +201,9 @@ public class ActionDecoder
         _decoder.EvidenceController.RequirePresentEvidence();
     }
     
-    private void SUBSTITUTE_EVIDENCE(string evidence)
+    private void SUBSTITUTE_EVIDENCE(string originalEvidenceName, string newEvidenceName)
     {
-        _decoder.EvidenceController.SubstituteEvidenceWithAlt(evidence);
+        _decoder.EvidenceController.SubstituteEvidence(originalEvidenceName, newEvidenceName);
         OnActionDone?.Invoke();
     }
     #endregion

@@ -13,10 +13,9 @@ public class EvidenceController : MonoBehaviour, IEvidenceController
 
     [Tooltip("This event is called when a piece of evidence is clicked")]
     [SerializeField] private UnityEvent<ICourtRecordObject> _onPresentEvidence;
-
-    [FormerlySerializedAs("_evidenceDictionary")]
-    [Tooltip("Drag an EvidenceDictionary component here.")]
-    [SerializeField] public EvidenceInventory _evidenceInventory;
+    
+    [Tooltip("Drag an ObjectInventory component here.")]
+    [SerializeField] public ObjectInventory _evidenceInventory;
 
     [Tooltip("Drag an EvidenceMenu component here, which will updated when the game state (i.e. ability to present evidence) changes.")]
     [SerializeField] public EvidenceMenu _evidenceMenu;
@@ -61,7 +60,7 @@ public class EvidenceController : MonoBehaviour, IEvidenceController
             return;
         }
 
-        _evidenceInventory.AddObject(evidence);
+        _evidenceInventory.Add(evidence);
     }
 
     /// <summary>
@@ -75,7 +74,7 @@ public class EvidenceController : MonoBehaviour, IEvidenceController
             return;
         }
 
-        _evidenceInventory.RemoveObject(evidence);
+        _evidenceInventory.Remove(evidence);
     }
 
     public void AddToCourtRecord(string actor)
@@ -96,15 +95,16 @@ public class EvidenceController : MonoBehaviour, IEvidenceController
     /// <summary>
     /// Substitutes a piece of evidence with its assigned alternate evidence.
     /// </summary>
-    /// <param name="evidence"></param>
-    public void SubstituteEvidenceWithAlt(string evidence)
+    /// <param name="originalEvidenceName">The name of the evidence currently in possessed by the player.</param>
+    /// <param name="newEvidenceName">The name of the new evidence to give the player.</param>
+    public void SubstituteEvidence(string originalEvidenceName, string newEvidenceName)
     {
         if (!HasEvidenceDictionary())
         {
             return;
         }
 
-        _evidenceInventory.SubstituteEvidenceWithAlt(evidence);
+        _evidenceInventory.Substitute(originalEvidenceName, newEvidenceName);
     }
 
     /// <summary>

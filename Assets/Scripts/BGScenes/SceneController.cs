@@ -16,8 +16,8 @@ public class SceneController : MonoBehaviour, ISceneController
     [Tooltip("Drag an ItemDisplay component here.")]
     [SerializeField] private ItemDisplay _itemDisplay;
 
-    [Tooltip("Drag an EvidenceInventory component here")]
-    [SerializeField] private EvidenceInventory _evidenceInventory;
+    [Tooltip("Drag an ObjectInventory component here")]
+    [SerializeField] private ObjectInventory _evidenceInventory;
 
     [Tooltip("Drag the AnimatableObject that plays fullscreen animations here.")]
     [SerializeField] private Animatable _fullscreenAnimationPlayer;
@@ -187,7 +187,7 @@ public class SceneController : MonoBehaviour, ISceneController
             Debug.LogError($"Cannot show item, no ItemDisplay component assigned to {name}.", gameObject);
         }
 
-        Evidence evidence = _evidenceInventory[item];
+        ICourtRecordObject evidence = _evidenceInventory[item];
         _itemDisplay.ShowItem(evidence.Icon, position);
     }
 
