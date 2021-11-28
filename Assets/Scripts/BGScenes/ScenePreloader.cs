@@ -19,7 +19,6 @@ public class ScenePreloader : ISceneController
 
     public void SetScene(string background)
     {
-        Debug.Log($"Loaded {background}.");
         Resources.Load(background);
     }
 
@@ -45,7 +44,6 @@ public class ScenePreloader : ISceneController
 
     public void ShowItem(string item, ItemDisplayPosition position)
     {
-        Debug.Log($"Loaded {item}.");
         Resources.Load(item);
     }
 

@@ -3,25 +3,31 @@ using Ink.Runtime;
 
 public class ScriptReader 
 {
-    private static List<string> _navigatedPaths = new List<string>();
-    
+    private List<string> _navigatedPaths = new List<string>();
+    private ActionDecoder _actionDecoder;
+
     public ScriptReader(IDecoder decoder, Story story)
+    {
+        _actionDecoder = new ActionDecoder(decoder);
+        ReadScript(story);
+    }
+
+    private void ReadScript(Story story)
     {
         if (_navigatedPaths.Contains(story.state.currentPathString))
             return;
         
         _navigatedPaths.Add(story.state.currentPathString);
         
-        ActionDecoder actionDecoder = new ActionDecoder(decoder);
         while (story.canContinue)
         {
             string line = story.Continue();
             if (line[0] == '&')
             {
-                actionDecoder.OnNewActionLine(line);
+                _actionDecoder.OnNewActionLine(line);
             }
         }
-
+        
         int choiceCount = story.currentChoices.Count;
         if (choiceCount > 0)
         {
@@ -33,7 +39,7 @@ public class ScriptReader
                 storyDuplicate.state.LoadJson(storyState);
                 storyDuplicate.ChooseChoiceIndex(i);
                
-                ScriptReader scriptReader = new ScriptReader(decoder, storyDuplicate);
+                ReadScript(storyDuplicate);
             }
         }
     }

@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class ScriptImporter : MonoBehaviour, IDecoder
 {
-    [SerializeField] private TextAsset _narrativeScript;
     [SerializeField] private ObjectInventory _actorInventory;
     [SerializeField] private ObjectInventory _evidenceInventory;
 
@@ -13,12 +12,15 @@ public class ScriptImporter : MonoBehaviour, IDecoder
     public IEvidenceController EvidenceController { get; private set; }
     public IAppearingDialogueController AppearingDialogueController { get; set; }
 
-    private ScriptReader _scriptReader;
-
     private void Awake()
     {
         ActorController = new ObjectPreloader(_actorInventory);
         EvidenceController = new ObjectPreloader(_evidenceInventory);
-        _scriptReader = new ScriptReader(this, new Story(_narrativeScript.text));
+        
+    }
+
+    public void Import(TextAsset narrativeScript)
+    {
+        new ScriptReader(this, new Story(narrativeScript.text));
     }
 }

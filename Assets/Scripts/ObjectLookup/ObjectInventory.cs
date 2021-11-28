@@ -35,8 +35,8 @@ public class ObjectInventory : MonoBehaviour
         return _currentObjects[index];
     }
 
-    public void Substitute(string originalEvidenceName, string newEvidenceName)
+    public void Substitute(string originalObjectName, string newObjectName)
     {
-        _currentObjects[_currentObjects.IndexOf(_dictionary[originalEvidenceName])] = _dictionary[newEvidenceName];
+        _currentObjects[_currentObjects.IndexOf(_dictionary[originalObjectName])] = _dictionary[newObjectName];
     }
 }

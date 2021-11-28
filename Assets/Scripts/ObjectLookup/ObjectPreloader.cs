@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ObjectPreloader : IActorController, IEvidenceController
+public class ObjectPreloader : IActorController, IEvidenceController, ISceneController, IAudioController
 {
     private readonly ObjectInventory _inventory;
     
@@ -77,18 +77,85 @@ public class ObjectPreloader : IActorController, IEvidenceController
 
     private void LoadActor(string actorName)
     {
-        LoadObject(actorName, "Actors");
+        if (_inventory.ContainsKey(actorName))
+            return;
+        
+        _inventory.Add(Resources.Load<ActorData>($"Actors/{actorName}"));
     }
     
     private void LoadEvidence(string evidenceName)
     {
-        LoadObject(evidenceName, "Evidence");
-    }
-    
-    private void LoadObject(string objectName, string directory)
-    {
-        if (_inventory.ContainsKey(objectName)) return;
+        if (_inventory.ContainsKey(evidenceName))
+            return;
         
-        _inventory.Add(Resources.Load<ActorData>($"{directory}/{objectName}"));
+        _inventory.Add(Resources.Load<Evidence>($"Evidence/{evidenceName}"));
+    }
+
+    public void FadeIn(float seconds)
+    {
+    }
+
+    public void FadeOut(float seconds)
+    {
+    }
+
+    public void ShakeScreen(float intensity, float duration, bool isBlocking)
+    {
+    }
+
+    public void SetScene(string background)
+    {
+    }
+
+    public void SetCameraPos(Vector2Int position)
+    {
+    }
+
+    public void PanCamera(float seconds, Vector2Int finalPosition)
+    {
+    }
+
+    public void PanToActorSlot(int oneBasedSlotIndex, float seconds)
+    {
+    }
+
+    public void JumpToActorSlot(int oneBasedSlotIndex)
+    {
+    }
+
+    public void ShowItem(string item, ItemDisplayPosition position)
+    {
+    }
+
+    public void ShowActor()
+    {
+    }
+
+    public void HideActor()
+    {
+    }
+
+    public void Wait(float seconds)
+    {
+    }
+
+    public void HideItem()
+    {
+    }
+
+    public void PlayAnimation(string animationName)
+    {
+    }
+
+    public void PlaySFX(string SFX)
+    {
+    }
+
+    public void PlaySong(string songName)
+    {
+    }
+
+    public void StopSong()
+    {
     }
 }

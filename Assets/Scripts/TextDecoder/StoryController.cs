@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(SceneLoader))]
+[RequireComponent(typeof(SceneLoader)), RequireComponent(typeof(ScriptImporter))]
 public class StoryController : MonoBehaviour
 {
     [Tooltip("List of inky dialogue scripts to be played in order")]
@@ -20,6 +20,11 @@ public class StoryController : MonoBehaviour
     private void Awake()
     {
         _sceneLoader = GetComponent<SceneLoader>();
+        var scriptImporter = GetComponent<ScriptImporter>();
+        foreach (var dialogue in _dialogueList)
+        {
+            scriptImporter.Import(dialogue.NarrativeScript);
+        }
     }
 
     /// <summary>
