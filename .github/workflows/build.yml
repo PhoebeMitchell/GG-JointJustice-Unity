@@ -97,6 +97,15 @@ jobs:
         with:
           projectPath: unity-ggjj/
           githubToken: ${{ secrets.GITHUB_TOKEN }}
+          customParameters: -debugCodeOptimization -enableCodeCoverage -coverageResultsPath ./coverage-results -coverageOptions generateAdditionalMetrics
+
+      - name: Upload XML report to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          name: EditMode+PlayMode
+          flags: automated
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: unity-ggjj/coverage-results/**/*.xml
 
       - name: Store test artifacts
         uses: actions/upload-artifact@v2
