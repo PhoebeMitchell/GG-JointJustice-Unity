@@ -1,18 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CaseMaker : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+{    
+     [field: SerializeField] public NodeFields NodeFields { get; private set; }
+     
+     public BGScene[] BgScenes { get; private set; }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+     private void Awake()
+     {
+          BgScenes = Resources.LoadAll<BGScene>("BGScenes");
+          NodeFields.SetSceneOptions(BgScenes);
+     }
 }
