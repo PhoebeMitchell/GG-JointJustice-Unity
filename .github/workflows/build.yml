@@ -16,7 +16,7 @@ on:
         description: 'Upload to GitHub Releases and itch.io?'
         required: true
         default: 'false'
-        
+
 concurrency: 
   group: ${{ github.ref }}
   cancel-in-progress: true
@@ -53,7 +53,7 @@ jobs:
         run: |
             echo "Skip activation job: ${{ secrets.UNITY_LICENSE != '' }}"
             echo "::set-output name=is_unity_license_set::${{ secrets.UNITY_LICENSE != '' }}"
-  
+
   activation:
     name: Request activation file 🔑
     needs: [checkLicense]
@@ -71,6 +71,49 @@ jobs:
         with:
           name: ${{ steps.getManualLicenseFile.outputs.filePath }}
           path: ${{ steps.getManualLicenseFile.outputs.filePath }}
+
+  unityTest:
+    name: Run PlayMode and EditorMode tests for Unity project
+    needs: [checkLicense]
+    if: needs.checkLicense.outputs.is_unity_license_set == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create LFS file list
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+      - name: Git LFS Pull
+        run: |
+          git lfs pull
+          git add .
+          git reset --hard
+
+      - name: Run PlayMode and EditMode tests
+        uses: game-ci/unity-test-runner@v2.0-alpha-6
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          projectPath: unity-ggjj/
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          customParameters: -debugCodeOptimization -enableCodeCoverage -coverageResultsPath ./coverage-results -coverageOptions generateAdditionalMetrics;assemblyFilters:+GG-JointJustice
+
+      - name: Upload XML report to Codecov
+        uses: codecov/codecov-action@v2
+        if: always()
+        with:
+          name: EditMode+PlayMode
+          flags: automated
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: unity-ggjj/coverage-results/**/*.xml
+
+      - name: Store test artifacts
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Test results
+          path: artifacts
 
   unityBuild:
     name: Build for ${{ matrix.targetPlatform.outputName }}
