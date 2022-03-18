@@ -1,3 +1,5 @@
+name: test
+
 name: Generate game builds
 on: 
   push:
