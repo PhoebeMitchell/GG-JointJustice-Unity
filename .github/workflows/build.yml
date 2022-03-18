@@ -222,7 +222,7 @@ jobs:
         uses: actions/upload-artifact@v2
         if: ${{ failure() || success() }}
         with:
-          name: Test results
+          name: Test results2
           path: artifacts
 
   unityBuild:
